@@ -1,18 +1,122 @@
-# Versions
+# Change log for NetworkingDSc
 
-## Unreleased
+The format is based on and uses the types of changes according to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [8.1.0] - 2020-08-04
+
+### Changed
+
+- NetworkingDsc
+  - Automatically publish documentation to GitHub Wiki - Fixes [Issue #462](https://github.com/dsccommunity/NetworkingDsc/issues/462).
+
+## Added
+
+- NetIPInterface
+  - Added `NlMtu` parameter - Fixes [Issue #460](https://github.com/dsccommunity/NetworkingDsc/issues/460).
+
+## Fixed
+
+- NetworkingDsc
+  - Update to force redeployment with latest version of `DSCResource.Common`
+    with fix `Get-LocalizationData` - Fixes [Issue #464](https://github.com/dsccommunity/NetworkingDsc/issues/464).
+  - Correct help block comment indentation - Fixes [Issue #466](https://github.com/dsccommunity/NetworkingDsc/issues/466).
+
+## [8.0.0] - 2020-06-21
+
+### Added
+
+- NetworkingDsc:
+  - Added build task `Generate_Conceptual_Help` to generate conceptual help
+    for the DSC resource.
+  - Added build task `Generate_Wiki_Content` to generate the wiki content
+    that can be used to update the GitHub Wiki.
+- Common:
+  - Added Assert-IPAddress function to reduce code duplication - Fixes
+    [Issue #408](https://github.com/dsccommunity/NetworkingDsc/issues/408).
+
+### Changed
+
+- NetworkingDsc:
+  - Updated to use the common module _DscResource.Common_.
+  - Fixed build failures caused by changes in `ModuleBuilder` module v1.7.0
+    by changing `CopyDirectories` to `CopyPaths` - Fixes [Issue #455](https://github.com/dsccommunity/NetworkingDsc/issues/455).
+  - Pin `Pester` module to 4.10.1 because Pester 5.0 is missing code
+    coverage - Fixes [Issue #456](https://github.com/dsccommunity/NetworkingDsc/issues/456).
+- DefaultGatewayAddress:
+  - Refactored to reduce code duplication.
+  - Fixed hash table style violations - fixes [Issue #429](https://github.com/dsccommunity/NetworkingDsc/issues/429).
+  - Fixed general style violations.
+- Added `.gitattributes` to ensure CRLF is used when pulling repository - Fixes
+  [Issue #430](https://github.com/dsccommunity/NetworkingDsc/issues/430).
+- BREAKING CHANGE: Changed resource prefix from MSFT to DSC.
+- Updated to use continuous delivery pattern using Azure DevOps - Fixes
+  [Issue #435](https://github.com/dsccommunity/NetworkingDsc/issues/435).
+- Updated CI pipeline files.
+- No longer run integration tests when running the build task `test`, e.g.
+  `.\build.ps1 -Task test`. To manually run integration tests, run the
+  following:
+  ```powershell
+  .\build.ps1 -Tasks test -PesterScript 'tests/Integration' -CodeCoverageThreshold 0
+  ```
+- Change Azure DevOps Pipeline definition to include `source/*` - Fixes [Issue #450](https://github.com/dsccommunity/NetworkingDsc/issues/450).
+- Updated pipeline to use `latest` version of `ModuleBuilder` - Fixes [Issue #451](https://github.com/dsccommunity/NetworkingDsc/issues/451).
+- Merge `HISTORIC_CHANGELOG.md` into `CHANGELOG.md` - Fixes [Issue #451](https://github.com/dsccommunity/NetworkingDsc/issues/451).
+- NetBios:
+  - Improved integration tests by using loopback adapter.
+  - Refactored unit tests to reduce code duplication and
+    increase coverage.
+  - Fix exception when specifying wildcard '*' in the
+    `InterfaceAlias` - Fixes [Issue #444](https://github.com/dsccommunity/NetworkingDsc/issues/444).
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
+### Fixed
+
+- Fixed IDs of Azure DevOps pipeline in badges in README.MD - Fixes
+  [Issue #438](https://github.com/dsccommunity/NetworkingDsc/issues/438).
+- Fixed typo in link to Wiki in README.MD
+
+### Security
+
+- None
+
+## [7.4.0.0] - 2019-09-19
+
+### Changed
 
 - Added Comment Based Help for `New-NotImplementedException` common
-  function - fixes [Issue #411](https://github.com/PowerShell/NetworkingDsc/issues/411).
+  function - fixes [Issue #411](https://github.com/dsccommunity/NetworkingDsc/issues/411).
+- Added common function 'Format-Win32NetworkADapterFilterByNetConnectionID'
+  to properly accept wild cards for Win32_NetworkAdapter filters.
+- Updated MSFT_Netbios to use 'Format-Win32NetworkADapterFilterByNetConnectionID'
+  - fixes [Issue #413](https://github.com/dsccommunity/NetworkingDsc/issues/413).
+- Corrected minor style and consistency issues in `NetworkingDsc.Common.tests.ps1`
+  and `NetworkingDsc.Common.ps1`.
+- Changed verbose messages in `Test-DscParameterState` to include
+  full type name.
+- Fixed bug in `Test-DscParameterState` that causes it to return true when
+  both the current array and desired array is empty.
+- Fix minor style issues in statement case.
 
-## 7.3.0.0
+## [7.3.0.0] - 2019-06-26
+
+### Changed
 
 - DnsClientGlobalSettings:
-  - Fixed SuffixSearchList Empty String Handling - fixes [Issue #398](https://github.com/PowerShell/NetworkingDsc/issues/398).
+  - Fixed SuffixSearchList Empty String Handling - fixes [Issue #398](https://github.com/dsccommunity/NetworkingDsc/issues/398).
 - NetAdapterAdvancedProperty:
   - Removed validation from RegistryKeyword parameter because the list
     of valid registry keywords is not fixed and will depend on adapter
-    driver - fixes [Issue #388](https://github.com/PowerShell/NetworkingDsc/issues/388).
+    driver - fixes [Issue #388](https://github.com/dsccommunity/NetworkingDsc/issues/388).
 - MSFT_WinsServerAddress
   Added MSFT_WinsServerAddress to control the WINS servers for a given network adapter.
 - Test-DscParameterState:
@@ -20,7 +124,7 @@
     sorting for arrays.
   - The functions ConvertTo-CimInstance and ConvertTo-Hashtable were added
     required by Test-DscParameterState.
-- Fix missing context message content in unit tests - fixes [Issue #405](https://github.com/PowerShell/NetworkingDsc/issues/405).
+- Fix missing context message content in unit tests - fixes [Issue #405](https://github.com/dsccommunity/NetworkingDsc/issues/405).
 - Correct style violations in unit tests:
   - Adding `Get`, `Set` and `Test` tags to appropriate `describe` blocks.
   - Removing uneccesary `#region` blocks.
@@ -30,22 +134,24 @@
   - Fix bug when LocalAddress or RemoteAddress is specified using CIDR
     notation with number of bits specified in subnet mask (e.g.
     10.0.0.1/8) rather than using CIDR subnet mask notation (e.g
-    10.0.0.1/255.0.0.0) - fixes [Issue #404](https://github.com/PowerShell/NetworkingDsc/issues/404).
+    10.0.0.1/255.0.0.0) - fixes [Issue #404](https://github.com/dsccommunity/NetworkingDsc/issues/404).
 
-## 7.2.0.0
+## [7.2.0.0] - 2019-05-15
+
+### Changed
 
 - NetAdapterAdvancedProperty:
   - Added support for RegistryKeyword `MaxRxRing1Length` and
-    `NumRxBuffersSmall` - fixes [Issue #387](https://github.com/PowerShell/NetworkingDsc/issues/387).
+    `NumRxBuffersSmall` - fixes [Issue #387](https://github.com/dsccommunity/NetworkingDsc/issues/387).
 - Firewall:
   - Prevent 'Parameter set cannot be resolved using the specified named
     parameters' error when updating rule when group name is specified - fixes
-    [Issue #130](https://github.com/PowerShell/NetworkingDsc/issues/130) and
-    [Issue #191](https://github.com/PowerShell/NetworkingDsc/issues/191).
+    [Issue #130](https://github.com/dsccommunity/NetworkingDsc/issues/130) and
+    [Issue #191](https://github.com/dsccommunity/NetworkingDsc/issues/191).
 - Opted into Common Tests 'Common Tests - Validate Localization' -
-  fixes [Issue #393](https://github.com/PowerShell/NetworkingDsc/issues/393).
+  fixes [Issue #393](https://github.com/dsccommunity/NetworkingDsc/issues/393).
 - Combined all `NetworkingDsc.ResourceHelper` module functions into
-  `NetworkingDsc.Common` module - fixes [Issue #394](https://github.com/PowerShell/NetworkingDsc/issues/394).
+  `NetworkingDsc.Common` module - fixes [Issue #394](https://github.com/dsccommunity/NetworkingDsc/issues/394).
 - Renamed all localization strings so that they are detected by
   'Common Tests - Validate Localization'.
 - Fixed issues with mismatched localization strings.
@@ -56,21 +162,25 @@
   issue was not caught until now when unit tests was added.
 - Corrected style violations in `NetworkingDsc.Common`.
 
-## 7.1.0.0
+## [7.1.0.0] - 2019-04-03
+
+### Changed
 
 - New Resource: NetAdapterState to enable or disable a network adapter - fixes
-  [Issue #365](https://github.com/PowerShell/NetworkingDsc/issues/365)
+  [Issue #365](https://github.com/dsccommunity/NetworkingDsc/issues/365)
 - Fix example publish to PowerShell Gallery by adding `gallery_api`
-  environment variable to `AppVeyor.yml` - fixes [Issue #385](https://github.com/PowerShell/NetworkingDsc/issues/385).
+  environment variable to `AppVeyor.yml` - fixes [Issue #385](https://github.com/dsccommunity/NetworkingDsc/issues/385).
 - MSFT_Proxy:
   - Fixed `ProxyServer`, `ProxyServerExceptions` and `AutoConfigURL`
     parameters so that they correctly support strings longer than 255
-    characters - fixes [Issue #378](https://github.com/PowerShell/NetworkingDsc/issues/378).
+    characters - fixes [Issue #378](https://github.com/dsccommunity/NetworkingDsc/issues/378).
 
-## 7.0.0.0
+## [7.0.0.0] - 2019-02-20
+
+### Changed
 
 - Refactored module folder structure to move resource to root folder of
-  repository and remove test harness - fixes [Issue #372](https://github.com/PowerShell/NetworkingDsc/issues/372).
+  repository and remove test harness - fixes [Issue #372](https://github.com/dsccommunity/NetworkingDsc/issues/372).
 - Removed module conflict tests because only required for harness style
   modules.
 - Opted into Common Tests 'Validate Example Files To Be Published',
@@ -78,11 +188,11 @@
 - Added 'DscResourcesToExport' to manifest to improve information in
   PowerShell Gallery and removed wildcards from 'FunctionsToExport',
   'CmdletsToExport', 'VariablesToExport' and 'AliasesToExport' - fixes
-  [Issue #376](https://github.com/PowerShell/NetworkingDsc/issues/376).
+  [Issue #376](https://github.com/dsccommunity/NetworkingDsc/issues/376).
 - MSFT_NetIPInterface:
   - Added `Dhcp`, `WeakHostReceive` and `WeakHostSend` parameters so that
     MSFT_DHCPClient, MSFT_WeakHostReceive, MSFT_WeakHostSend can be
-    deprecated - fixes [Issue #360](https://github.com/PowerShell/NetworkingDsc/issues/360).
+    deprecated - fixes [Issue #360](https://github.com/dsccommunity/NetworkingDsc/issues/360).
 - MSFT_DhcpClient:
   - BREAKING CHANGE: Resource has been deprecated and replaced by `Dhcp`
     parameter in MSFT_NetIPInterface.
@@ -101,49 +211,57 @@
 - MSFT_NetworkTeam:
   - Change `Get-TargetResource` to return actual TeamMembers if network team
     exists and 'Ensure' returns 'Present' even when actual TeamMembers do
-    not match 'TeamMembers' parameter - fixes [Issue #342](https://github.com/PowerShell/NetworkingDsc/issues/342).
+    not match 'TeamMembers' parameter - fixes [Issue #342](https://github.com/dsccommunity/NetworkingDsc/issues/342).
 - Updated examples to format required for publishing to PowerShell Gallery - fixes
-  [Issue #374](https://github.com/PowerShell/NetworkingDsc/issues/374).
+  [Issue #374](https://github.com/dsccommunity/NetworkingDsc/issues/374).
 - MSFT_NetAdapterAdvancedProperty:
   - Fixes NetworkAdapterName being returned in Name property when calling
-    Get-TargetResourceFixes - fixes [Issue #370](https://github.com/PowerShell/NetworkingDsc/issues/370).
+    Get-TargetResourceFixes - fixes [Issue #370](https://github.com/dsccommunity/NetworkingDsc/issues/370).
 
-## 6.3.0.0
+## [6.3.0.0] - 2019-01-10
+
+### Changed
 
 - MSFT_IPAddress:
   - Updated to allow retaining existing addresses in order to support cluster
     configurations as well.
 
-## 6.2.0.0
+## [6.2.0.0] - 2018-11-29
 
-- Added .VSCode settings for applying DSC PSSA rules - fixes [Issue #357](https://github.com/PowerShell/NetworkingDsc/issues/357).
+### Changed
+
+- Added .VSCode settings for applying DSC PSSA rules - fixes [Issue #357](https://github.com/dsccommunity/NetworkingDsc/issues/357).
 - Updated LICENSE file to match the Microsoft Open Source Team standard - fixes
-  [Issue #363](https://github.com/PowerShell/NetworkingDsc/issues/363)
+  [Issue #363](https://github.com/dsccommunity/NetworkingDsc/issues/363)
 - MSFT_NetIPInterface:
   - Added a new resource for configuring the IP interface settings for a network
     interface.
 
-## 6.1.0.0
+## [6.1.0.0] - 2018-09-05
+
+### Changed
 
 - MSFT_Firewall:
   - Added full stop to end of MOF field descriptions.
   - Support for `[`, `]` and `*` characters in the Name property
-    added - fixes [Issue #348](https://github.com/PowerShell/NetworkingDsc/issues/348).
+    added - fixes [Issue #348](https://github.com/dsccommunity/NetworkingDsc/issues/348).
   - Improved unit tests to meet style guidelines.
 
-## 6.0.0.0
+## [6.0.0.0] - 2018-09-05
+
+### Changed
 
 - New Example 2-ConfigureSuffixSearchList.ps1 for multiple
   SuffixSearchList entries for resource DnsClientGlobalSetting.
 - BREAKING CHANGE:
-  - Renamed xNetworking to NetworkingDsc - fixes [Issue #119](https://github.com/PowerShell/NetworkingDsc/issues/290).
+  - Renamed xNetworking to NetworkingDsc - fixes [Issue #119](https://github.com/dsccommunity/NetworkingDsc/issues/290).
   - Changed all MSFT\_xResourceName to MSFT\_ResourceName.
   - Updated DSCResources, Examples, Modules and Tests with new naming.
   - Updated Year to 2018 in License and Manifest.
   - Updated README.md from xNetworking to NetworkingDsc.
 - MSFT_IPAddress:
   - Updated to allow setting multiple IP Addresses
-    when one is already set - Fixes [Issue #323](https://github.com/PowerShell/NetworkingDsc/issues/323)
+    when one is already set - Fixes [Issue #323](https://github.com/dsccommunity/NetworkingDsc/issues/323)
 - Corrected CHANGELOG.MD to report that issue with InterfaceAlias matching
   on Adapter description rather than Adapter Name was released in 5.7.0.0
   rather than 5.6.0.0 - See [Issue #315](https://github.com/PowerShell/xNetworking/issues/315).
@@ -156,9 +274,11 @@
   - Improved detection of environmemt for running network team integration
     tests.
 - Added a CODE\_OF\_CONDUCT.md with the same content as in the README.md - fixes
-  [Issue #337](https://github.com/PowerShell/NetworkingDsc/issues/337).
+  [Issue #337](https://github.com/dsccommunity/NetworkingDsc/issues/337).
 
-## 5.7.0.0
+## [5.7.0.0] - 2018-05-03
+
+### Changed
 
 - Enabled PSSA rule violations to fail build - Fixes [Issue #320](https://github.com/PowerShell/xNetworking/issues/320).
 - MSFT_xNetAdapterAdvancedProperty:
@@ -168,7 +288,9 @@
   - Fix issue with InterfaceAlias matching on Adapter description
     rather than Adapter Name - Fixes [Issue #315](https://github.com/PowerShell/xNetworking/issues/315).
 
-## 5.6.0.0
+## [5.6.0.0] - 2018-03-22
+
+### Changed
 
 - Reordered resource list in README.MD to be alphabetical and added
   missing resource xNetAdapterAdvancedProperty - Fixes [issue #309](https://github.com/PowerShell/xNetworking/issues/309).
@@ -192,7 +314,9 @@
   - Corrected style and formatting to meet HQRM guidelines.
 - Updated tests to meet Pester V4 guidelines - Fixes [Issue #272](https://github.com/PowerShell/xNetworking/issues/272).
 
-## 5.5.0.0
+## [5.5.0.0] - 2018-02-08
+
+### Changed
 
 - MSFT_xNetAdapterAdvancedProperty:
   - Created new resource configuring AdvancedProperties for NetAdapter
@@ -223,7 +347,9 @@
   - Updated tests to meet Pester v4 guidelines.
   - Converted exceptions to use ResourceHelper functions.
 
-## 5.4.0.0
+## [5.4.0.0] - 2017-12-20
+
+### Changed
 
 - MSFT_xIPAddressOption:
   - Added a new resource to set the SkipAsSource option for an IP address.
@@ -239,7 +365,9 @@
     in Wiki documentation.
   - Converted tests to meet Pester V4 standards.
 
-## 5.3.0.0
+## [5.3.0.0] - 2017-11-15
+
+### Changed
 
 - MSFT_xProxySettings:
   - Created new resource configuring proxy settings.
@@ -254,7 +382,9 @@
   - Corrected style and formatting to meet HQRM guidelines.
   - Converted exceptions to use ResourceHelper functions.
 
-## 5.2.0.0
+## [5.2.0.0] - 2017-10-05
+
+### Changed
 
 - Added `Documentation and Examples` section to Readme.md file - see
   [issue #259](https://github.com/PowerShell/xNetworking/issues/259).
@@ -270,7 +400,9 @@
   - Corrected style and formatting to meet HQRM guidelines.
   - Converted exceptions to use ResourceHelper functions.
 
-## 5.1.0.0
+## [5.1.0.0] - 2017-08-23
+
+### Changed
 
 - MSFT_xDhcpClient:
   - Corrected style and formatting to meet HQRM guidelines.
@@ -316,7 +448,9 @@
     fixes [Issue 254](https://github.com/PowerShell/xNetworking/issues/254).
   - Improved unit test coverage for this resource.
 
-## 5.0.0.0
+## [5.0.0.0] - 2017-07-12
+
+### Changed
 
 - Find-NetworkAdapter:
   - Fixed to return null if exception thrown.
@@ -344,13 +478,17 @@
 - MSFT_xIPAddress:
   - BREAKING CHANGE: Adding support for multiple IP addresses being assigned.
 
-## 4.1.0.0
+## [4.1.0.0] - 2017-06-01
+
+### Changed
 
 - Added integration test to test for conflicts with other common resource kit modules.
 - Prevented ResourceHelper and Common module cmdlets from being exported to resolve
   conflicts with other resource modules.
 
-## 4.0.0.0
+## [4.0.0.0] - 2017-05-31
+
+### Changed
 
 - Converted to use AppVeyor.psm1 in DSCResource.Tests repository.
 - Converted to use Example and Markdown tests in DSCResource.Tests repository.
@@ -365,7 +503,9 @@
   - Added Find-NetAdapter cmdlet to NetworkingDsc.Common.
 - Correct example parameters format to meet style guidelines.
 
-## 3.2.0.0
+## [3.2.0.0] - 2017-01-26
+
+### Changed
 
 - Fixed typo in the example's Action property from "Blocked" (which isn't a valid
   value) to "Block"
@@ -435,7 +575,9 @@
 - MSFT_xFirewall:
   - Converted to remove Invoke-Expression.
 
-## 3.1.0.0
+## [3.1.0.0] - 2016-12-14
+
+### Changed
 
 - Changed parameter format in Readme.md to improve information coverage and consistency.
 - Changed all MOF files to be consistent and meet HQRM guidelines.
@@ -443,7 +585,9 @@
 - Added xNetAdapterRDMA resource
 - Fixes to support changes to DSCResource.Tests.
 
-## 3.0.0.0
+## [3.0.0.0] - 2016-11-02
+
+### Changed
 
 - Corrected integration test filenames:
   - MSFT_xDefaultGatewayAddress.Integration.Tests.ps1
@@ -459,7 +603,9 @@
   - Added support for the use of wildcard (*) in InterfaceAlias parameter.
 - BREAKING CHANGE - MSFT_xIPAddress: SubnetMask parameter renamed to PrefixLength.
 
-## 2.12.0.0
+## [2.12.0.0] - 2016-09-21
+
+### Changed
 
 - Fixed bug in MSFT_xIPAddress resource when xIPAddress follows xVMSwitch.
 - Added the following resources:
@@ -468,7 +614,9 @@
   MSFT_xNetworkTeam to prevent failures while loading those resources on systems
   with $PSUICulture other than en-US
 
-## 2.11.0.0
+## [2.11.0.0] - 2016-08-10
+
+### Changed
 
 - Added the following resources:
   - MSFT_xDnsClientGlobalSetting resource to configure the DNS Suffix Search List
@@ -480,7 +628,9 @@
 - Updated xRoute integration tests to use v1.1.0 test header.
 - Extended xRoute integration tests to perform both add and remove route tests.
 
-## 2.10.0.0
+## [2.10.0.0] - 2016-06-29
+
+### Changed
 
 - Added the following resources:
   - MSFT_xNetAdapterBinding resource to enable/disable network adapter bindings.
@@ -490,7 +640,9 @@
   Static IP address to prevent issue when DHCP assigned IP address already
   matches staticly assigned IP address.
 
-## 2.9.0.0
+## [2.9.0.0] - 2016-05-18
+
+### Changed
 
 - MSFT_xDefaultGatewayAddress: Added Integration Tests.
 - MSFT_xDhcpClient: Added Integration Tests.
@@ -503,7 +655,9 @@
   - Test-xNetworkAdapterName
   - Set-xNetworkAdapterName
 
-## 2.8.0.0
+## [2.8.0.0] - 2016-03-31
+
+### Changed
 
 - Templates folder removed. Use the test templates in them
   [Tests.Template folder in the DSCResources repository](https://github.com/PowerShell/DscResources/tree/master/Tests.Template)
@@ -513,12 +667,16 @@
 - MSFT_xFirewall: Fix test of Profile parameter status.
 - MSFT_xIPAddress: Fix false negative when desired IP is a substring of current IP.
 
-## 2.7.0.0
+## [2.7.0.0] - 2016-02-03
+
+### Changed
 
 - Added the following resources:
   - MSFT_xNetworkTeam resource to manage native network adapter teaming.
 
-## 2.6.0.0
+## [2.6.0.0] - 2016-02-03
+
+### Changed
 
 - Added the following resources:
   - MSFT_xDhcpClient resource to enable/disable DHCP on individual interfaces.
@@ -544,7 +702,9 @@
   tests directory.
 - Unit & Integration test template headers updated to match DSCResource templates.
 
-## 2.5.0.0
+## [2.5.0.0] - 2015-12-03
+
+### Changed
 
 - Added the following resources:
   - MSFT_xDNSConnectionSuffix resource to manage connection-specific DNS suffixes.
@@ -579,7 +739,9 @@
   - RemoteUser
 - MSFT_xFirewall: Profile parameter now handled as an Array.
 
-## 2.4.0.0
+## [2.4.0.0] - 2015-10-22
+
+### Changed
 
 - Added following resources:
   - MSFT_xDefaultGatewayAddress
@@ -607,7 +769,9 @@
 - MSFT_xDNSServerAddress: Corrected error message when address format doesn't
   match address family.
 
-## 2.3.0.0
+## [2.3.0.0] - 2015-09-11
+
+### Changed
 
 - MSFT_xDNSServerAddress: Added support for setting DNS for both IPv4 and IPv6
   on the same Interface
@@ -621,23 +785,33 @@
   - General re-factoring and clean up of xFirewall.
   - Added Unit and Integration tests to resource.
 
-## 2.2.0.0
+## [2.2.0.0] - 2015-06-09
+
+### Changed
 
 - Changes in xFirewall resources to meet Test-xDscResource criteria
 
-## 2.1.1.1
+## [2.1.1.1] - 2014-08-22
+
+### Changed
 
 - Updated to fix issue with Get-DscConfiguration and xFirewall
 
-## 2.1.0
+## [2.1.0] - 2014-04-08
+
+### Changed
 
 - Added validity check that IPAddress and IPAddressFamily conforms with each other
 
-## 2.0.0.0
+## [2.0.0.0] - 2018-01-01
+
+### Changed
 
 - Adding the xFirewall resource
 
-## 1.0.0.0
+## [1.0.0.0] - 2018-01-01
+
+### Changed
 
 - Initial release with the following resources:
   - xIPAddress
