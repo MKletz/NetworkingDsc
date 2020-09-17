@@ -38,6 +38,10 @@ function Get-TargetResource
         $IPAddress,
 
         [Parameter()]
+        [System.String]
+        $Comment,
+
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure = 'Present'
@@ -52,6 +56,7 @@ function Get-TargetResource
         return @{
             HostName  = $result.HostName
             IPAddress = $result.IPAddress
+            Comment   = $result.Comment
             Ensure    = 'Present'
         }
     }
@@ -60,6 +65,7 @@ function Get-TargetResource
         return @{
             HostName  = $HostName
             IPAddress = $null
+            Comment   = $null
             Ensure    = 'Absent'
         }
     }
@@ -92,6 +98,10 @@ function Set-TargetResource
         $IPAddress,
 
         [Parameter()]
+        [System.String]
+        $Comment,
+
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure = 'Present'
@@ -112,7 +122,7 @@ function Set-TargetResource
     if ($currentValues.Ensure -eq 'Absent' -and $Ensure -eq 'Present')
     {
         Write-Verbose -Message ($script:localizedData.CreateNewEntry -f $HostName)
-        Add-Content -Path $hostPath -Value "`r`n$IPAddress`t$HostName"
+        Add-Content -Path $hostPath -Value "`r`n$IPAddress`t$HostName`t$Comment"
     }
     else
     {
@@ -222,57 +232,99 @@ function Get-HostEntry
         $HostName
     )
 
-    $hostPath = "$env:windir\System32\drivers\etc\hosts"
+    [System.String]$hostPath = "$($env:windir)\System32\drivers\etc\hosts"
 
-    $allHosts = Get-Content -Path $hostPath | Where-Object -FilterScript {
+    [System.Collections.ArrayList]$allHosts = @()
+    $allHosts += Get-Content -Path $hostPath | Where-Object -FilterScript {
         [System.String]::IsNullOrEmpty($_) -eq $false -and $_.StartsWith('#') -eq $false
     }
 
     foreach ($hosts in $allHosts)
     {
-        $data = $hosts -split '\s+'
+        $data = $hosts.Trim() -split '\s+'
 
-        if ($data.Length -gt 2)
+        [System.String[]]$hostArray = @()
+        [System.String]$ipAddress = $data[0]
+        [System.String]$comment = [System.String]::Empty
+
+        for ($i = 1; $i -lt $data.Length; $i++)
         {
-            # Account for host entries that have multiple entries on a single line
-            $result = @()
-            $array = @()
-
-            for ($i = 1; $i -lt $data.Length; $i++)
+            if ($data[$i] -eq '#')
             {
-                <#
-                    Filter commments on the line.
-                    Example: 0.0.0.0 s.gateway.messenger.live.com # breaks Skype GH-183
-                    becomes:
-                    0.0.0.0 s.gateway.messenger.live.com
-                #>
-                if ($data[$i] -eq '#')
-                {
-                    break
-                }
-
-                $array += $data[$i]
+                [int]$commentStart = $i + 1
+                [int]$commentEnd = $data.Length - 1
+                $comment = '# ' + $data[$commentStart..$commentEnd] -join ' '
+                break
             }
 
-            $result = @{
-                Host      = $array
-                IPAddress = $data[0]
+            $hostArray += $data[$i]
+        }
+
+        if ($HostName -in $hostArray)
+        {
+            $return = [PSCustomObject]@{
+                HostName  = $hostArray
+                IPAddress = $ipAddress
+                Comment   = $comment
             }
+
+            $return | Add-Member -MemberType 'ScriptMethod' -Name 'EntryText' -Value {"$($this.IPAddress)`t$($this.HostName -join ' ')`t$($this.Comment)"}
+            return $return
+        }
+    }
+}
+
+function Remove-HostEntry
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $HostName
+    )
+
+    if($entry = Get-HostEntry -HostName $HostName)
+    {
+        [System.String]$hostPath = "$($env:windir)\System32\drivers\etc\hosts"
+        [System.String]$Line = (Select-String -Path $hostPath -Pattern $HostName).Line
+        $entry.HostName = $entry.HostName | Where-Object -FilterScript {$_ -ne $HostName}
+
+        if($entry.HostName.Length -eq 0)
+        {
+            (Get-Content -Path $hostPath) | Where-Object -FilterScript {$_ -notmatch $Line} | Set-Content -Path $hostPath
         }
         else
         {
-            $result = @{
-                Host      = $data[1]
-                IPAddress = $data[0]
-            }
-        }
-
-        if ($result.Host -eq $HostName)
-        {
-            return @{
-                HostName  = $result.Host
-                IPAddress = $result.IPAddress
-            }
+            (Get-Content -Path $hostPath) -replace $Line,$entry.EntryText() | Set-Content -Path $hostPath
         }
     }
+}
+
+function Add-HostEntry
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $HostName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $IPAddress,
+
+        [Parameter()]
+        [System.String]
+        $Comment
+    )
+
+    [System.String]$hostPath = "$($env:windir)\System32\drivers\etc\hosts"
+    $Comment = $Comment.Trim()
+
+    if($Comment -and !$Comment.StartsWith('#'))
+    {
+        $Comment = "# $($comment)"
+    }
+
+    [System.String]$Content = "$($IPAddress)`t$($HostName -join ' ')`t$($Comment)".Trim()
+    Add-Content -Path $hostPath -Value "`r`n$($Content)"
 }
